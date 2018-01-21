@@ -23,14 +23,16 @@ public class Test {
     private static final String inputRestaurantsFilePath = "/Users/nicholaskoutroumanis/Desktop/cloudComputing/restaurants-ver1.txt";
     private static final String outputFilePath = "";
     
+    public static final float radius = 4;
+    
     public static void main(String args[]) throws IOException
     {
+        
         JobConf conf = new JobConf(Test.class);
         conf.setJobName("Test Class for finding the restaurants near Hotels");
         
         MultipleInputs.addInputPath(conf, new Path(inputHotelsFilePath), TextInputFormat.class, HotelsMapper.class);
         MultipleInputs.addInputPath(conf, new Path(inputRestaurantsFilePath), TextInputFormat.class, RestaurantsMapper.class);
-        
         //FileOutputFormat.setOutputPath(conf,new Path(inputFilePath));
         //conf.setPartitionerClass();
         //conf.setMapperClass(HotelsMapper.class);

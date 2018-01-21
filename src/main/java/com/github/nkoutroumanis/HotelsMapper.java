@@ -18,6 +18,7 @@ import org.apache.hadoop.mapred.Reporter;
 /**
  *
  * @author nicholaskoutroumanis
+ * @param <Test>
  */
 public class HotelsMapper extends MapReduceBase implements Mapper<LongWritable, Text, ArrayPrimitiveWritable, Text> {
 
@@ -25,11 +26,11 @@ public class HotelsMapper extends MapReduceBase implements Mapper<LongWritable, 
     public void map(LongWritable key, Text value, OutputCollector<ArrayPrimitiveWritable, Text> oc, Reporter rprtr) throws IOException {
         String s = value.toString();
         String[] tokens = s.split("|");
-         
-        float[] coordinates = new float[2];
-        coordinates[0] = Float.valueOf(tokens[4]);
-        coordinates[1] = Float.valueOf(tokens[5]);
         
-        oc.collect(new ArrayPrimitiveWritable(coordinates), new Text(tokens[0]+" - "+tokens[1]));          
+        float[] coordinates = new float[2];
+        coordinates[0] = Float.valueOf(tokens[4]);//lat
+        coordinates[1] = Float.valueOf(tokens[5]);//lon
+        
+            oc.collect(new ArrayPrimitiveWritable(coordinates), new Text(tokens[0]+" - "+tokens[1]));                       
     }
 }
