@@ -34,8 +34,8 @@ public class Test {
         
         JobConf conf = new JobConf(Test.class);
         conf.setFloat("radius", 4);
-        conf.setInt("xCellsDivision", 4);
-        conf.setInt("yCellsDivision", 4);
+        conf.setInt("xCellsDivision", 1);
+        conf.setInt("yCellsDivision", 1);
         conf.setStrings("keywords", "nick, hi, hello");
 
         conf.setJobName("Test Class for finding the restaurants near Hotels");
@@ -45,15 +45,13 @@ public class Test {
 //FileInputFormat.setInputPaths(conf,new Path(inputHotelsFilePath));
         FileOutputFormat.setOutputPath(conf,new Path("/Users/nicholaskoutroumanis/Desktop/cloudComputing/ooo.txt"));
         conf.setPartitionerClass(HotelsRestaurantsGridPartitioner.class);
-        conf.setNumReduceTasks(4*4);
+        conf.setNumReduceTasks(1);
         conf.setReducerClass(HotelsRestaurantsReducer.class);
 ////        
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(Text.class);
-////        
-//
-//
-conf.setOutputFormat(TextOutputFormat.class);
+
+//conf.setOutputFormat(TextOutputFormat.class);
         JobClient.runJob(conf);
     }
 }

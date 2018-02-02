@@ -30,7 +30,7 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
     public void configure(JobConf job) {
         radius = job.getFloat("radius", 0);
         String[] i = job.getStrings("keywords");
-        
+
         keywords = i[0].split(", ");
     }
 
@@ -53,19 +53,21 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
 
         for (HotelsRestaurantsWritable aHotel : hotels) {
             HotelsRestaurantsWritable chosenRestaurant = null;
-            float jaccardOfChosenRestaurant;
+            float jaccardOfChosenRestaurant = 0;
 
             for (HotelsRestaurantsWritable aRestaurant : restaurants) {
-                if(distance(aHotel.getLatitude(),aHotel.getLongtitude(),aRestaurant.getLatitude(),aRestaurant.getLongtitude())<=radius)
-                {
-                    String[] keywordsOfARestaurant = aRestaurant.getKeywords().split(", ");
-                    
+                if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {
+                    float currentJaccard = countJaccard(aRestaurant.getKeywords().split(", "));
+                    if (currentJaccard > jaccardOfChosenRestaurant) {
+                        jaccardOfChosenRestaurant = currentJaccard;
+                        chosenRestaurant = aRestaurant;
+                    }
+
                 }
 
             }
-            
-            if(chosenRestaurant != null)
-            {
+
+            if (chosenRestaurant != null) {
                 oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
             }
 
@@ -89,14 +91,24 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
 //        }
     }
 
-//    private static float countJaccard(String[] keywordsOfReastaurant)
-//    {
-//        
-//    }
-    
-    private static float distance(float hotelLatitude, float hotelLongtitude, float restaurantLatitude, float restaurantLongtitude)
-    {
-        return (float) Math.sqrt(Math.pow(hotelLatitude - restaurantLatitude,2) + Math.pow(hotelLongtitude - restaurantLongtitude,2));
+    private static float countJaccard(String[] keywordsOfRestaurant) {
+        int commons = 0;
+        for (String keywordQuery : keywords) {
+            for (String keywordOfRestaurant : keywordsOfRestaurant) {
+                if (keywordQuery.equalsIgnoreCase(keywordOfRestaurant)) {
+                    commons++;
+                }
+            }
+        }
+        if (commons == 0) {
+            return 0;
+        } else {
+            return commons / (keywords.length + keywordsOfRestaurant.length - commons);
+        }
+    }
+
+    private static float distance(float hotelLatitude, float hotelLongtitude, float restaurantLatitude, float restaurantLongtitude) {
+        return (float) Math.sqrt(Math.pow(hotelLatitude - restaurantLatitude, 2) + Math.pow(hotelLongtitude - restaurantLongtitude, 2));
     }
 
 }
