@@ -47,8 +47,8 @@ public class Test {
         JobConf conf = new JobConf(new Configuration(),Test.class);
         
         conf.setFloat("radius", 1);
-        conf.setInt("xCellsDivision", 3);
-        conf.setInt("yCellsDivision", 3);
+        conf.setInt("xCellsDivision", 2);
+        conf.setInt("yCellsDivision", 2);
         conf.setStrings("keywords", "Coffee, American");
         
         conf.setJobName("Test Class for finding the restaurants near Hotels");
