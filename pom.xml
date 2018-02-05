@@ -9,8 +9,8 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-app</artifactId>
-            <version>3.0.0</version>
-        </dependency>
+            <version>2.9.0</version>
+        </dependency>              
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
