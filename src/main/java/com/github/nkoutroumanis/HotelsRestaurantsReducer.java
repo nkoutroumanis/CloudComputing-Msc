@@ -29,9 +29,8 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
     @Override
     public void configure(JobConf job) {
         radius = job.getFloat("radius", 0);
-        String[] i = job.getStrings("keywords");
+        keywords = job.getStrings("keywords");
 
-        keywords = i[0].split(", ");
     }
 
     @Override
@@ -45,12 +44,14 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
 
             if (hrw.isHotel()) {
                 hotels.add(hrw);
-            } else {
+            } else {               
                 restaurants.add(hrw);
             }
 
         }
 
+        System.out.println("HOTELS"+hotels.size());
+        System.out.println("RESTAURANTS"+restaurants.size());
         for (HotelsRestaurantsWritable aHotel : hotels) {
             HotelsRestaurantsWritable chosenRestaurant = null;
             float jaccardOfChosenRestaurant = 0;
@@ -68,6 +69,7 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
             }
 
             if (chosenRestaurant != null) {
+                
                 oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
             }
 

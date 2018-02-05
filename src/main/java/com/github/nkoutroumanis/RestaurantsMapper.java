@@ -31,44 +31,27 @@ public class RestaurantsMapper extends MapReduceBase implements Mapper<LongWrita
 
     @Override
     public void map(LongWritable key, Text value, OutputCollector<IntWritable, HotelsRestaurantsWritable> oc, Reporter rprtr) throws IOException {
+        
         String s = value.toString();
-        String[] tokens = s.split("|");
+        String[] tokens = s.split("\\|");
 
         float[] coordinates = new float[2];
-        coordinates[0] = Float.valueOf(tokens[3]);//lat
-        coordinates[1] = Float.valueOf(tokens[4]);//lon
+        coordinates[0] = Float.parseFloat(tokens[3]);//lat
+        coordinates[1] = Float.parseFloat(tokens[4]);//lon
 
         if (grid.contains(coordinates[0], coordinates[1])) {
+            
             HotelsRestaurantsWritable hrw = new HotelsRestaurantsWritable(false, tokens[0] + " - " + tokens[1], coordinates[0], coordinates[1], tokens[5]);
 
             List<Integer> restaurantCells = grid.putRestaurantsInCells(coordinates[0], coordinates[1]);
+            
+            
             for (int i : restaurantCells) {
+                
                 oc.collect(new IntWritable(i), hrw);
             }
 
         }
 
     }
-//    @Override
-//    public void map(LongWritable key, Text value, OutputCollector<ArrayPrimitiveWritable, ArrayWritable> oc, Reporter rprtr) throws IOException {
-//        String s = value.toString();
-//        String[] tokens = s.split("|");
-//
-//        float[] coordinates = new float[2];
-//        coordinates[0] = Float.valueOf(tokens[3]);
-//        coordinates[1] = Float.valueOf(tokens[4]);
-//
-//        if (Grid.INSTANCE.contains(coordinates[0], coordinates[1])) {
-//            String[] keywords = tokens[5].split(", ");
-//
-//            String[] array = new String[keywords.length + 1];
-//            array[0] = tokens[0] + " - " + tokens[1];//the first element of the array is the id and name of restaurant
-//
-//            for (int i = 1; i < array.length; i++) {
-//                array[i] = keywords[i - 1];
-//            }
-//
-//            oc.collect(new ArrayPrimitiveWritable(coordinates), new ArrayWritable(array));
-//        }
-//    }
 }

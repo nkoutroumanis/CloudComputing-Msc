@@ -43,11 +43,12 @@ public class Grid {
         List<Integer> cellsList = new ArrayList<>();
         
         for (int x = 0; x < xCellsDivision; x++) {
-            boolean a = Float.compare(latitude, (xLower + (x * (xUpper - xLower)) / xCellsDivision))-radius >= 0;//left of cell
+            boolean a = Float.compare(latitude, (xLower + (x * (xUpper - xLower)) / xCellsDivision)-radius) >= 0;//left of cell
             boolean b = Float.compare((xLower + (x + 1) * (xUpper - xLower) / xCellsDivision)+radius, latitude) >= 0;//right of cell
             if (a && b) {
+                
                 for (int y = 0; y < yCellsDivision; y++) {
-                    if (Float.compare(longtitude, (yLower + (y * (yUpper - yLower)) / yCellsDivision))-radius >= 0 //bottom of cell
+                    if (Float.compare(longtitude, (yLower + (y * (yUpper - yLower)) / yCellsDivision)-radius) >= 0 //bottom of cell
                             && Float.compare((yLower + (y + 1) * (yUpper - yLower) / yCellsDivision)+radius, longtitude) >= 0) {//top of cell
 
                         cellsList.add(x + y * xCellsDivision);

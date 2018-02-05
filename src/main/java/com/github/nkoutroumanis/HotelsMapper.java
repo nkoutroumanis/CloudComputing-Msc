@@ -37,11 +37,11 @@ public class HotelsMapper extends MapReduceBase implements Mapper<LongWritable, 
     @Override
     public void map(LongWritable key, Text value, OutputCollector<IntWritable, HotelsRestaurantsWritable> oc, Reporter rprtr) throws IOException {
         String s = value.toString();
-        String[] tokens = s.split("|");
+        String[] tokens = s.split("\\|");
 
         float[] coordinates = new float[2];
-        coordinates[0] = Float.valueOf(tokens[4]);//lat
-        coordinates[1] = Float.valueOf(tokens[5]);//lon
+        coordinates[0] = Float.parseFloat(tokens[4]);//lat
+        coordinates[1] = Float.parseFloat(tokens[5]);//lon
         
         if(grid.contains(coordinates[0], coordinates[1]))
         {

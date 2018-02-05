@@ -22,6 +22,11 @@ public class HotelsRestaurantsWritable implements Writable {
     private float longtitude;
     private String keywords;
 
+    private HotelsRestaurantsWritable()
+    {
+        
+    }
+    
     public HotelsRestaurantsWritable(boolean isHotel, String name, float latitude, float longtitude, String keywords) {
         this.isHotel = isHotel;
         this.name = name;
@@ -33,20 +38,26 @@ public class HotelsRestaurantsWritable implements Writable {
     @Override
     public void write(DataOutput out) throws IOException {
         out.writeBoolean(isHotel());
-        out.writeChars(getName());
+        out.writeUTF(getName());
         out.writeFloat(getLatitude());
         out.writeFloat(getLongtitude());
-        out.writeChars(getKeywords());
+        out.writeUTF(getKeywords());
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         isHotel = in.readBoolean();
-        name = in.readLine();
+        name = in.readUTF();
         latitude = in.readFloat();
         longtitude = in.readFloat();
-        keywords = in.readLine();
+        keywords = in.readUTF();
     }
+    
+//    public static HotelsRestaurantsWritable read(DataInput in) throws IOException{
+//        HotelsRestaurantsWritable hrw = new HotelsRestaurantsWritable();
+//        hrw.readFields(in);
+//        return hrw;
+//    }
 
     /**
      * @return the isHotel
