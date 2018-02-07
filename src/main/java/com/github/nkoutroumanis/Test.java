@@ -40,16 +40,16 @@ public class Test {
     public static void main(String args[]) throws IOException, Exception {
         
         
-        //FileUtils.deleteDirectory(new File(outputFilePath));
+//        FileUtils.deleteDirectory(new File(outputFilePath));
 //        
 //        Configuration conf = new Configuration();
 //        Job job = new Job(conf);
         JobConf conf = new JobConf(new Configuration(),Test.class);
         
-        conf.setFloat("radius", 1);
+        conf.setFloat("radius", 10);
         conf.setInt("xCellsDivision", 2);
         conf.setInt("yCellsDivision", 2);
-        conf.setStrings("keywords", "Coffee, American");
+        conf.setStrings("keywords", "Coffee,American");
         
         conf.setJobName("Test Class for finding the restaurants near Hotels");
         
@@ -57,7 +57,7 @@ public class Test {
         MultipleInputs.addInputPath(conf, new Path(inputRestaurantsFilePath), TextInputFormat.class, RestaurantsMapper.class);
 
         conf.setPartitionerClass(HotelsRestaurantsGridPartitioner.class);
-        conf.setNumReduceTasks(9);
+        conf.setNumReduceTasks(4);
 
         conf.setMapOutputKeyClass(IntWritable.class);
         conf.setMapOutputValueClass(HotelsRestaurantsWritable.class);

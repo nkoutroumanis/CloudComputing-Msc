@@ -30,7 +30,7 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
     public void configure(JobConf job) {
         radius = job.getFloat("radius", 0);
         keywords = job.getStrings("keywords");
-
+        
     }
 
     @Override
@@ -39,25 +39,48 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
         List<HotelsRestaurantsWritable> hotels = new ArrayList<>();
         List<HotelsRestaurantsWritable> restaurants = new ArrayList<>();
 
+//        while (hotelsRestaurantsValue.hasNext()) {
+//            HotelsRestaurantsWritable hrw = hotelsRestaurantsValue.next();
+//            HotelsRestaurantsWritable hrw1 = new HotelsRestaurantsWritable();
+//
+//            if (hrw.isHotel()) {
+//                hotels.add(hrw);
+//            } else {
+//                restaurants.add(hrw);
+//            }
+//
+//        }
+        
         while (hotelsRestaurantsValue.hasNext()) {
             HotelsRestaurantsWritable hrw = hotelsRestaurantsValue.next();
 
             if (hrw.isHotel()) {
-                hotels.add(hrw);
-            } else {               
-                restaurants.add(hrw);
+                hotels.add(new HotelsRestaurantsWritable(hrw.isHotel(),hrw.getName(),hrw.getLatitude(),hrw.getLongtitude(),hrw.getKeywords()));
+            } else {
+                restaurants.add(new HotelsRestaurantsWritable(hrw.isHotel(),hrw.getName(),hrw.getLatitude(),hrw.getLongtitude(),hrw.getKeywords()));
             }
 
         }
-
-        System.out.println("HOTELS"+hotels.size());
-        System.out.println("RESTAURANTS"+restaurants.size());
-        for (HotelsRestaurantsWritable aHotel : hotels) {
+//        for(int i=0;i<hotels.size();i++)
+//        {
+//            System.out.println("HOTEL: "+hotels.get(i).getName());
+//        }
+//        for(int i=0;i<restaurants.size();i++)
+//        {
+//            System.out.println("Restaurant: "+restaurants.get(i).getName());
+//        }
+//
+//        System.out.println("HOTELS" + hotels.size());
+//        System.out.println("RESTAURANTS" + restaurants.size());
+        
+        for (int i=0;i<hotels.size();i++) {
+            HotelsRestaurantsWritable aHotel = hotels.get(i);
+            
             HotelsRestaurantsWritable chosenRestaurant = null;
             float jaccardOfChosenRestaurant = 0;
-
-            for (HotelsRestaurantsWritable aRestaurant : restaurants) {
-                if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {
+            for (int k=0;k<restaurants.size();k++) {
+                HotelsRestaurantsWritable aRestaurant = restaurants.get(k);
+                if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {              
                     float currentJaccard = countJaccard(aRestaurant.getKeywords().split(", "));
                     if (currentJaccard > jaccardOfChosenRestaurant) {
                         jaccardOfChosenRestaurant = currentJaccard;
@@ -67,13 +90,39 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
                 }
 
             }
+            //System.out.println("Restaurants finished for a hotel");
 
             if (chosenRestaurant != null) {
-                
+
+                //System.out.println("CHOSEN: "+aHotel.getName() +" " +chosenRestaurant.getName());
                 oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
             }
 
-        }
+        }        
+        
+//        for (HotelsRestaurantsWritable aHotel : hotels) {
+//            HotelsRestaurantsWritable chosenRestaurant = null;
+//            float jaccardOfChosenRestaurant = 0;
+//            System.out.println("HOTEL: " + aHotel.getName());
+//            for (HotelsRestaurantsWritable aRestaurant : restaurants) {
+//                System.out.println("Restaurant: " + aHotel.getName());
+//                if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {
+//                    float currentJaccard = countJaccard(aRestaurant.getKeywords().split(", "));
+//                    if (currentJaccard > jaccardOfChosenRestaurant) {
+//                        jaccardOfChosenRestaurant = currentJaccard;
+//                        chosenRestaurant = aRestaurant;
+//                    }
+//
+//                }
+//
+//            }
+//
+//            if (chosenRestaurant != null) {
+//
+//                oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
+//            }
+//
+//        }
 
 //        int counter1 = 0;
 //        int counter2 = 0;
@@ -95,6 +144,7 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
 
     private static float countJaccard(String[] keywordsOfRestaurant) {
         int commons = 0;
+        
         for (String keywordQuery : keywords) {
             for (String keywordOfRestaurant : keywordsOfRestaurant) {
                 if (keywordQuery.equalsIgnoreCase(keywordOfRestaurant)) {
@@ -102,10 +152,11 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
                 }
             }
         }
+
         if (commons == 0) {
             return 0;
         } else {
-            return commons / (keywords.length + keywordsOfRestaurant.length - commons);
+            return (float) commons / (keywords.length + keywordsOfRestaurant.length - commons);
         }
     }
 
