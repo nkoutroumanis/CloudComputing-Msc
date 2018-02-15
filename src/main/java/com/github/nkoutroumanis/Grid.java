@@ -17,10 +17,10 @@ public class Grid {
     private final float radius;
     private final int xCellsDivision;
     private final int yCellsDivision;
-    private final float xLower;//= 8 - Test.radius;//x-lat y-long
-    private final float yLower;// = -123;
-    private final float xUpper;//= 50 + Test.radius;///mipos auto prepei na einai 50?
-    private final float yUpper;//= 42 + Test.radius;    
+    private final float xLower;
+    private final float yLower;
+    private final float xUpper;
+    private final float yUpper;    
 
     private Grid(float radius, int xCellsDivision, int yCellsDivision) {
         this.radius = radius;

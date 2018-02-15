@@ -6,13 +6,8 @@
 package com.github.nkoutroumanis;
 
 import java.io.IOException;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.ArrayPrimitiveWritable;
-import org.apache.hadoop.io.ArrayWritable;
-import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.MapReduceBase;

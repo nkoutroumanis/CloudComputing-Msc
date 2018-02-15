@@ -39,17 +39,6 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
         List<HotelsRestaurantsWritable> hotels = new ArrayList<>();
         List<HotelsRestaurantsWritable> restaurants = new ArrayList<>();
 
-//        while (hotelsRestaurantsValue.hasNext()) {
-//            HotelsRestaurantsWritable hrw = hotelsRestaurantsValue.next();
-//            HotelsRestaurantsWritable hrw1 = new HotelsRestaurantsWritable();
-//
-//            if (hrw.isHotel()) {
-//                hotels.add(hrw);
-//            } else {
-//                restaurants.add(hrw);
-//            }
-//
-//        }
         
         while (hotelsRestaurantsValue.hasNext()) {
             HotelsRestaurantsWritable hrw = hotelsRestaurantsValue.next();
@@ -61,25 +50,12 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
             }
 
         }
-//        for(int i=0;i<hotels.size();i++)
-//        {
-//            System.out.println("HOTEL: "+hotels.get(i).getName());
-//        }
-//        for(int i=0;i<restaurants.size();i++)
-//        {
-//            System.out.println("Restaurant: "+restaurants.get(i).getName());
-//        }
-//
-//        System.out.println("HOTELS" + hotels.size());
-//        System.out.println("RESTAURANTS" + restaurants.size());
+        oc.collect(new Text("REDUCER NUMBER: "+ key.get()), new Text("HAS HOTELS: "+hotels.size()+" RESTAURANTS: "+restaurants.size()));
         
-        for (int i=0;i<hotels.size();i++) {
-            HotelsRestaurantsWritable aHotel = hotels.get(i);
-            
+        for (HotelsRestaurantsWritable aHotel : hotels) {
             HotelsRestaurantsWritable chosenRestaurant = null;
             float jaccardOfChosenRestaurant = 0;
-            for (int k=0;k<restaurants.size();k++) {
-                HotelsRestaurantsWritable aRestaurant = restaurants.get(k);
+            for (HotelsRestaurantsWritable aRestaurant : restaurants) {
                 if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {              
                     float currentJaccard = countJaccard(aRestaurant.getKeywords().split(", "));
                     if (currentJaccard > jaccardOfChosenRestaurant) {
@@ -90,56 +66,12 @@ public class HotelsRestaurantsReducer extends MapReduceBase implements Reducer<I
                 }
 
             }
-            //System.out.println("Restaurants finished for a hotel");
 
             if (chosenRestaurant != null) {
-
-                //System.out.println("CHOSEN: "+aHotel.getName() +" " +chosenRestaurant.getName());
-                oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
+                oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()+" Score: "+jaccardOfChosenRestaurant));
             }
 
         }        
-        
-//        for (HotelsRestaurantsWritable aHotel : hotels) {
-//            HotelsRestaurantsWritable chosenRestaurant = null;
-//            float jaccardOfChosenRestaurant = 0;
-//            System.out.println("HOTEL: " + aHotel.getName());
-//            for (HotelsRestaurantsWritable aRestaurant : restaurants) {
-//                System.out.println("Restaurant: " + aHotel.getName());
-//                if (distance(aHotel.getLatitude(), aHotel.getLongtitude(), aRestaurant.getLatitude(), aRestaurant.getLongtitude()) <= radius) {
-//                    float currentJaccard = countJaccard(aRestaurant.getKeywords().split(", "));
-//                    if (currentJaccard > jaccardOfChosenRestaurant) {
-//                        jaccardOfChosenRestaurant = currentJaccard;
-//                        chosenRestaurant = aRestaurant;
-//                    }
-//
-//                }
-//
-//            }
-//
-//            if (chosenRestaurant != null) {
-//
-//                oc.collect(new Text(aHotel.getName()), new Text(chosenRestaurant.getName()));
-//            }
-//
-//        }
-
-//        int counter1 = 0;
-//        int counter2 = 0;
-//        List<HotelsRestaurantsWritable> hotelsRestaurantslist = new ArrayList<>();
-//        while(hotelsRestaurantsValue.hasNext())
-//        {
-//            HotelsRestaurantsWritable hrw = hotelsRestaurantsValue.next();
-//            hotelsRestaurantslist.add(hrw);
-//            while(counter2 < counter1){
-//                if(hotelsRestaurantslist.get(counter1).isHotel() != hotelsRestaurantslist.get(counter2).isHotel())
-//                {
-//                    
-//                }
-//            }
-//            counter2 = 0;
-//            counter1 += 1;
-//        }
     }
 
     private static float countJaccard(String[] keywordsOfRestaurant) {
