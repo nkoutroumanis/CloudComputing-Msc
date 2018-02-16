@@ -37,7 +37,8 @@ public class Grid {
         return new Grid(radius, xCellsDivision, yCellsDivision);
 
     }
-
+    
+//cells are represented by numbers. each cell has a unique number. the starting number of cell is zero. a restaurant may be contained in two cells. so the list will have 2 numbers
     public List<Integer> putRestaurantsInCells(float latitude, float longtitude) {
         
         List<Integer> cellsList = new ArrayList<>();
@@ -61,7 +62,7 @@ public class Grid {
     }
     
     
-
+//cells are represented by numbers. each cell has a unique number. the starting number of cell is zero
     public int putHotelsInCells(float latitude, float longtitude) {
         int cell = -1;
         for (int x = 0; x < xCellsDivision; x++) {
